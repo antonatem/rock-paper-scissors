@@ -1,155 +1,121 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# DO NOT MODIFY THIS FILE\n",
-    "\n",
-    "import random\n",
-    "\n",
-    "\n",
-    "def play(player1, player2, num_games, verbose=False):\n",
-    "    p1_prev_play = \"\"\n",
-    "    p2_prev_play = \"\"\n",
-    "    results = {\"p1\": 0, \"p2\": 0, \"tie\": 0}\n",
-    "\n",
-    "    for _ in range(num_games):\n",
-    "        p1_play = player1(p2_prev_play)\n",
-    "        p2_play = player2(p1_prev_play)\n",
-    "\n",
-    "        if p1_play == p2_play:\n",
-    "            results[\"tie\"] += 1\n",
-    "            winner = \"Tie.\"\n",
-    "        elif (p1_play == \"P\" and p2_play == \"R\") or (\n",
-    "                p1_play == \"R\" and p2_play == \"S\") or (p1_play == \"S\"\n",
-    "                                                       and p2_play == \"P\"):\n",
-    "            results[\"p1\"] += 1\n",
-    "            winner = \"Player 1 wins.\"\n",
-    "        elif p2_play == \"P\" and p1_play == \"R\" or p2_play == \"R\" and p1_play == \"S\" or p2_play == \"S\" and p1_play == \"P\":\n",
-    "            results[\"p2\"] += 1\n",
-    "            winner = \"Player 2 wins.\"\n",
-    "\n",
-    "        if verbose:\n",
-    "            print(\"Player 1:\", p1_play, \"| Player 2:\", p2_play)\n",
-    "            print(winner)\n",
-    "            print()\n",
-    "\n",
-    "        p1_prev_play = p1_play\n",
-    "        p2_prev_play = p2_play\n",
-    "\n",
-    "    games_won = results['p2'] + results['p1']\n",
-    "\n",
-    "    if games_won == 0:\n",
-    "        win_rate = 0\n",
-    "    else:\n",
-    "        win_rate = results['p1'] / games_won * 100\n",
-    "\n",
-    "    print(\"Final results:\", results)\n",
-    "    print(f\"Player 1 win rate: {win_rate}%\")\n",
-    "\n",
-    "    return (win_rate)\n",
-    "\n",
-    "\n",
-    "def quincy(prev_play, counter=[0]):\n",
-    "\n",
-    "    counter[0] += 1\n",
-    "    choices = [\"R\", \"R\", \"P\", \"P\", \"S\"]\n",
-    "    return choices[counter[0] % len(choices)]\n",
-    "\n",
-    "\n",
-    "def mrugesh(prev_opponent_play, opponent_history=[]):\n",
-    "    opponent_history.append(prev_opponent_play)\n",
-    "    last_ten = opponent_history[-10:]\n",
-    "    most_frequent = max(set(last_ten), key=last_ten.count)\n",
-    "\n",
-    "    if most_frequent == '':\n",
-    "        most_frequent = \"S\"\n",
-    "\n",
-    "    ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}\n",
-    "    return ideal_response[most_frequent]\n",
-    "\n",
-    "\n",
-    "def kris(prev_opponent_play):\n",
-    "    if prev_opponent_play == '':\n",
-    "        prev_opponent_play = \"R\"\n",
-    "    ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}\n",
-    "    return ideal_response[prev_opponent_play]\n",
-    "\n",
-    "\n",
-    "def abbey(prev_opponent_play,\n",
-    "          opponent_history=[],\n",
-    "          play_order=[{\n",
-    "              \"RR\": 0,\n",
-    "              \"RP\": 0,\n",
-    "              \"RS\": 0,\n",
-    "              \"PR\": 0,\n",
-    "              \"PP\": 0,\n",
-    "              \"PS\": 0,\n",
-    "              \"SR\": 0,\n",
-    "              \"SP\": 0,\n",
-    "              \"SS\": 0,\n",
-    "          }]):\n",
-    "\n",
-    "    if not prev_opponent_play:\n",
-    "        prev_opponent_play = 'R'\n",
-    "    opponent_history.append(prev_opponent_play)\n",
-    "\n",
-    "    last_two = \"\".join(opponent_history[-2:])\n",
-    "    if len(last_two) == 2:\n",
-    "        play_order[0][last_two] += 1\n",
-    "\n",
-    "    potential_plays = [\n",
-    "        prev_opponent_play + \"R\",\n",
-    "        prev_opponent_play + \"P\",\n",
-    "        prev_opponent_play + \"S\",\n",
-    "    ]\n",
-    "\n",
-    "    sub_order = {\n",
-    "        k: play_order[0][k]\n",
-    "        for k in potential_plays if k in play_order[0]\n",
-    "    }\n",
-    "\n",
-    "    prediction = max(sub_order, key=sub_order.get)[-1:]\n",
-    "\n",
-    "    ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}\n",
-    "    return ideal_response[prediction]\n",
-    "\n",
-    "\n",
-    "def human(prev_opponent_play):\n",
-    "    play = \"\"\n",
-    "    while play not in ['R', 'P', 'S']:\n",
-    "        play = input(\"[R]ock, [P]aper, [S]cissors? \")\n",
-    "        print(play)\n",
-    "    return play\n",
-    "\n",
-    "\n",
-    "def random_player(prev_opponent_play):\n",
-    "    return random.choice(['R', 'P', 'S'])\n"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.8.2"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 4
-}
+import random
+
+
+def play(player1, player2, num_games, verbose=False):
+    p1_prev_play = ""
+    p2_prev_play = ""
+    results = {"p1": 0, "p2": 0, "tie": 0}
+
+    for _ in range(num_games):
+        p1_play = player1(p2_prev_play)
+        p2_play = player2(p1_prev_play)
+
+        if p1_play == p2_play:
+            results["tie"] += 1
+            winner = "Tie."
+        elif (p1_play == "P" and p2_play == "R") or (
+                p1_play == "R" and p2_play == "S") or (p1_play == "S" and p2_play == "P"):
+            results["p1"] += 1
+            winner = "Player 1 wins."
+        elif p2_play == "P" and p1_play == "R" or p2_play == "R" and p1_play == "S" or p2_play == "S" and p1_play == "P":
+            results["p2"] += 1
+            # print("Loss")
+            winner = "Player 2 wins."
+
+        if verbose:
+            print("Player 1:", p1_play, "| Player 2:", p2_play)
+            print(winner)
+            print()
+
+        p1_prev_play = p1_play
+        p2_prev_play = p2_play
+
+    games_won = results['p2'] + results['p1']
+
+    if games_won == 0:
+        win_rate = 0
+    else:
+        win_rate = results['p1'] / games_won * 100
+
+    print("Final results:", results)
+    print(f"Player 1 win rate: {win_rate}%")
+
+    return (win_rate)
+
+
+def quincy(prev_play, counter=[0]):
+
+    counter[0] += 1
+    choices = ["R", "R", "P", "P", "S"]
+    return choices[counter[0] % len(choices)]
+
+
+def mrugesh(prev_opponent_play, opponent_history=[]):
+    opponent_history.append(prev_opponent_play)
+    last_ten = opponent_history[-10:]
+    most_frequent = max(set(last_ten), key=last_ten.count)
+
+    if most_frequent == '':
+        most_frequent = "S"
+
+    ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}
+    return ideal_response[most_frequent]
+
+
+def kris(prev_opponent_play):
+    if prev_opponent_play == '':
+        prev_opponent_play = "R"
+    ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}
+    return ideal_response[prev_opponent_play]
+
+
+def abbey(prev_opponent_play,
+          opponent_history=[],
+          play_order=[{
+              "RR": 0,
+              "RP": 0,
+              "RS": 0,
+              "PR": 0,
+              "PP": 0,
+              "PS": 0,
+              "SR": 0,
+              "SP": 0,
+              "SS": 0,
+          }]):
+
+    if not prev_opponent_play:
+        prev_opponent_play = 'R'
+    opponent_history.append(prev_opponent_play)
+
+    last_two = "".join(opponent_history[-2:])
+    if len(last_two) == 2:
+        play_order[0][last_two] += 1
+
+    potential_plays = [
+        prev_opponent_play + "R",
+        prev_opponent_play + "P",
+        prev_opponent_play + "S",
+    ]
+
+    sub_order = {
+        k: play_order[0][k]
+        for k in potential_plays if k in play_order[0]
+    }
+
+    prediction = max(sub_order, key=sub_order.get)[-1:]
+
+    ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}
+    # print(ideal_response[prediction])
+    return ideal_response[prediction]
+
+
+def human(prev_opponent_play):
+    play = ""
+    while play not in ['R', 'P', 'S']:
+        play = input("[R]ock, [P]aper, [S]cissors? ")
+        print(play)
+    return play
+
+
+def random_player(prev_opponent_play):
+    return random.choice(['R', 'P', 'S'])
