@@ -1,7 +1,7 @@
 play_order = {}
 def player(prev_play, opponent_history=[]):
     ideal_response = {'P': 'S', 'R': 'P', 'S': 'R'}
-    guess = 'P'
+    guess = 'S'
 
     if not prev_play:
         prev_play = 'R'
